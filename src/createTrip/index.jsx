@@ -4,7 +4,9 @@ import { Input } from '../components/ui/input';
 import { BudgetOptions, SelectTravelsList } from '../constants/Options';
 
 import { Button } from "../components/ui/button"
-
+import { toast } from 'sonner';
+import { AI_PROMPT } from '../constants/Options';
+import { chatSession } from '../service/Aimodel.jsx';
 
 const CreateTrip = () => {
 
@@ -22,6 +24,29 @@ const CreateTrip = () => {
   useEffect(()=>{
     console.log(formData);
   },[formData])
+
+
+  const onGenerateTrip=async()=>{
+    if(formData?.noOfDays>7 && !formData?.location || !formData?.budget || !formData?.traveler){
+      toast("Please Fill all details")
+      return ;
+    }
+
+    const FINAL_PROMPT=AI_PROMPT
+    .replace('{location}',formData?.location)
+    .replace('{noOfDays}',formData?.noOfDays)
+    .replace('{traveler}',formData?.traveler)
+    .replace('{budget}',formData?.budget)
+    .replace('{totalDays}',formData?.noOfDays)
+
+    console.log(FINAL_PROMPT);
+
+    const result=await chatSession.sendMessage(FINAL_PROMPT)
+
+    console.log(result?.response?.text());
+  }
+
+
   return (
     <div className='sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10'>
 
@@ -53,7 +78,7 @@ const CreateTrip = () => {
         <div className='grid grid-cols-3 gap-5 mt-5'>
           {BudgetOptions.map((item,index) => (
             
-            <div key={index} className="p-4 border rounded-lg hover:shadow-lg cursor-pointer"
+            <div key={index} className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer ${formData?.budget==item.title&&'shadow-xl border-black'}`}
               onClick={()=>handleInputChange('budget',item.title)}
             >
               
@@ -70,7 +95,9 @@ const CreateTrip = () => {
         <div className='grid grid-cols-3 gap-5 mt-5'>
           {SelectTravelsList.map((item,index) => (
             
-            <div key={index} className="p-4 border rounded-lg hover:shadow-lg cursor-pointer">
+            <div key={index} className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer ${formData?.traveler==item.people&&'shadow-xl border-black'}`}
+             onClick={()=>handleInputChange('traveler',item.people)}
+            >
               
               <h2 className='text-4xl'>{item.icon}</h2>
               <h2 className="text-lg font-bold">{item.title}</h2>
@@ -82,7 +109,7 @@ const CreateTrip = () => {
         </div>
 
         <div className='flex justify-end my-10'>
-          <Button>Create Trip</Button>
+          <Button onClick={onGenerateTrip}>Create Trip</Button>
         </div>
 
     </div>

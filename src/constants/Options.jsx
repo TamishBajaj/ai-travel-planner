@@ -47,4 +47,4 @@ export const BudgetOptions=[
     }
 ]
 
-export const AI_PROMPT='Generate Travel Plan for Location :{location}'
+export const AI_PROMPT='Generate Travel Plan for location: {location}, for {noOfDays} days for {traveler} with a {budget} budget, Give me a Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName,Place Details, Place Image Url, Geo Coordinates, ticket pricing, rating, Time to travel to each location for {totalDays} days with each day plan with best time to visit in JSON format.'
